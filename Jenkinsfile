@@ -10,12 +10,25 @@ pipeline {
         IMAGE_TAG        = "${env.BUILD_NUMBER}"
         BACKEND_IMAGE    = "${DOCKER_REGISTRY}/carebuddy-backend:${IMAGE_TAG}"
         FRONTEND_IMAGE   = "${DOCKER_REGISTRY}/carebuddy-frontend:${IMAGE_TAG}"
+        // Ensure pip3 / python3 are on PATH in Jenkins container
+        PATH             = "/usr/bin:/usr/local/bin:${env.PATH}"
     }
 
     stages {
 
+        // ── 0. Install Python (Jenkins container needs it) ────────
+        stage('Setup Python') {
+            steps {
+                sh '''
+                    python3 --version || (echo "ERROR: python3 not found in Jenkins container" && exit 1)
+                    pip3 --version    || python3 -m pip --version
+                '''
+            }
+        }
+
         // ── 1. Checkout ───────────────────────────────────────────
         stage('Checkout') {
+
             steps {
                 checkout scm
                 echo "✅ Checked out branch: ${env.BRANCH_NAME} (build #${env.BUILD_NUMBER})"
@@ -27,7 +40,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh '''
-                        pip install --quiet ruff
+                        pip3 install --quiet ruff
                         ruff check . --output-format=github
                     '''
                 }
@@ -51,7 +64,8 @@ pipeline {
             steps {
                 dir('backend') {
                     sh '''
-                        pip install --quiet -r requirements.txt -r requirements-test.txt
+                        pip3 install --quiet -r requirements.txt -r requirements-test.txt
+                        mkdir -p reports
                         pytest tests/ \
                             --junitxml=reports/test-results.xml \
                             --cov=app \
@@ -63,8 +77,7 @@ pipeline {
             }
             post {
                 always {
-                    junit         'backend/reports/test-results.xml'
-                    cobertura     coberturaReportFile: 'backend/reports/coverage.xml'
+                    junit 'backend/reports/test-results.xml'
                 }
             }
         }
@@ -85,7 +98,7 @@ pipeline {
                     steps {
                         dir('backend') {
                             sh '''
-                                pip install --quiet pip-audit
+                                pip3 install --quiet pip-audit
                                 pip-audit -r requirements.txt || true
                             '''
                         }
