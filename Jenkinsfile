@@ -20,8 +20,9 @@ pipeline {
         stage('Setup Python') {
             steps {
                 sh '''
-                    python3 --version || (echo "ERROR: python3 not found in Jenkins container" && exit 1)
-                    pip3 --version    || python3 -m pip --version
+                    python3 --version
+                    python3 -m venv /var/jenkins_home/.ci-venv
+                    /var/jenkins_home/.ci-venv/bin/pip install --quiet --upgrade pip
                 '''
             }
         }
@@ -40,8 +41,8 @@ pipeline {
             steps {
                 dir('backend') {
                     sh '''
-                        pip3 install --quiet ruff
-                        ruff check . --output-format=github
+                        /var/jenkins_home/.ci-venv/bin/pip install --quiet ruff
+                        /var/jenkins_home/.ci-venv/bin/ruff check . --output-format=github
                     '''
                 }
             }
@@ -64,9 +65,9 @@ pipeline {
             steps {
                 dir('backend') {
                     sh '''
-                        pip3 install --quiet -r requirements.txt -r requirements-test.txt
+                        /var/jenkins_home/.ci-venv/bin/pip install --quiet -r requirements.txt -r requirements-test.txt
                         mkdir -p reports
-                        pytest tests/ \
+                        /var/jenkins_home/.ci-venv/bin/pytest tests/ \
                             --junitxml=reports/test-results.xml \
                             --cov=app \
                             --cov-report=xml:reports/coverage.xml \
@@ -98,8 +99,8 @@ pipeline {
                     steps {
                         dir('backend') {
                             sh '''
-                                pip3 install --quiet pip-audit
-                                pip-audit -r requirements.txt || true
+                                /var/jenkins_home/.ci-venv/bin/pip install --quiet pip-audit
+                                /var/jenkins_home/.ci-venv/bin/pip-audit -r requirements.txt || true
                             '''
                         }
                     }
