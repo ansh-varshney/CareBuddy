@@ -46,12 +46,6 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"⚠️  ChromaDB warm-up failed (non-fatal): {e}")
 
-    # Pre-initialize memory backend — resolves Redis timeout at startup, not per request
-    try:
-        await memory._init_backend()
-    except Exception as e:
-        logger.warning(f"⚠️  Memory backend init failed (non-fatal): {e}")
-
     yield
 
     # ── Shutdown ─────────────────────────────────────

@@ -46,16 +46,14 @@ def client(reset_db):
     - memory backend reset each test so no cross-test state leaks
     """
     from app.main import app
-    from app.core.memory import memory
+    from app.core.memory import memory, InMemoryStore
 
     # Reset memory backend so each test gets a fresh InMemoryStore
-    memory._backend = None
+    memory._backend = InMemoryStore()
 
     app.dependency_overrides[get_db] = override_get_db
 
     # Patch out only the DB and ChromaDB startup calls.
-    # memory._init_backend is NOT patched — we let it run so the
-    # InMemoryStore gets created and is available to chat routes.
     with patch("app.main.init_db"), \
          patch("app.main.rag_retriever.warm_up"):
         with TestClient(app) as c:
