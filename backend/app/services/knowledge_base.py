@@ -1,7 +1,6 @@
 """Knowledge base ingestion service."""
 
 import logging
-from typing import Optional
 
 from app.core.rag_pipeline import rag_retriever
 

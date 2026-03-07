@@ -19,7 +19,7 @@ def main():
     print("=" * 50)
 
     stats = seed_knowledge_base()
-    print(f"\n✅ Knowledge base ready!")
+    print("\n✅ Knowledge base ready!")
     print(f"   Total documents: {stats['total_documents']}")
     print(f"   Collection: {stats['collection_name']}")
 

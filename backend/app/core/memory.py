@@ -3,7 +3,6 @@
 import json
 import logging
 from collections import defaultdict
-from typing import Optional
 
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 

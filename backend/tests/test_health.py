@@ -1,6 +1,6 @@
 """Tests for the /health endpoint."""
 
-import pytest
+
 
 
 def test_health_returns_ok(client):

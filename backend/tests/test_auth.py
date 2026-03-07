@@ -1,6 +1,6 @@
 """Tests for authentication routes: register, login, /me."""
 
-import pytest
+
 
 
 # ── Registration ─────────────────────────────────────────────────

@@ -12,7 +12,7 @@ from app.api.middleware.auth import (
     create_access_token,
     require_user,
 )
-from app.utils.validators import UserRegister, UserLogin, TokenResponse
+from app.utils.validators import UserRegister, TokenResponse
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 

@@ -1,6 +1,6 @@
 """Tests for the symptom journal endpoints."""
 
-import pytest
+
 
 
 def test_list_symptoms_empty(client, auth_headers):

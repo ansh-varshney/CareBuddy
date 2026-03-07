@@ -1,6 +1,5 @@
 """Tests for chat REST endpoints (non-streaming). LLM is mocked."""
 
-import pytest
 from unittest.mock import patch, AsyncMock
 
 
