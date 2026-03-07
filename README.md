@@ -151,5 +151,4 @@ The CareBuddy framework establishes a baseline pipeline for localized, multi-age
 
 ## Licensing Information
 
-MIT License 2026. 
-*Disclaimer: CareBuddy is an experimental software project developed for the Google Summer of Code (GSoC) 2026. It is not licensed medical software and should not be used as a substitute for professional clinical judgment.*
+MIT License 2026.
