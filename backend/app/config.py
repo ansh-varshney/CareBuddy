@@ -30,9 +30,6 @@ class Settings(BaseSettings):
         "sqlite:///./carebuddy.db"
     )
 
-    # ── Redis ───────────────────────────────────────────
-    REDIS_URL: str = "redis://localhost:6379/0"
-
     # ── Auth ────────────────────────────────────────────
     SECRET_KEY: str = "your-secret-key-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60

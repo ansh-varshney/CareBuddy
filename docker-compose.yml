@@ -12,8 +12,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     volumes:
       - ./backend:/app
       - chroma_data:/app/chroma_data
@@ -41,22 +39,6 @@ services:
     networks:
       - carebuddy-net
 
-  # ── Redis ────────────────────────────────────────────────
-  redis:
-    image: redis:7-alpine
-    container_name: carebuddy-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - carebuddy-net
-
   # ── Nginx Reverse Proxy ─────────────────────────────────
   nginx:
     image: nginx:alpine
@@ -72,7 +54,6 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
   chroma_data:
 
 

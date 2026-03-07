@@ -57,29 +57,10 @@ class ConversationMemory:
 
     def __init__(self, max_history: int = 20):
         self.max_history = max_history
-        self._backend = None
-
-    async def _init_backend(self):
-        """Initialize backend once — Redis if available, otherwise in-memory."""
-        try:
-            import redis.asyncio as aioredis
-            client = aioredis.from_url(
-                settings.REDIS_URL,
-                decode_responses=True,
-                socket_connect_timeout=0.1,   # 100ms max — fail fast
-                socket_timeout=0.1,
-            )
-            await client.ping()
-            self._backend = client
-            logger.info("✅ Redis connected for conversation memory")
-        except Exception:
-            logger.warning("⚠️  Redis not available — using in-memory store (dev mode)")
-            self._backend = InMemoryStore()
+        self._backend = InMemoryStore()
 
     async def _get_backend(self):
         """Return the already-initialized backend."""
-        if self._backend is None:
-            await self._init_backend()
         return self._backend
 
     def _key(self, conversation_id: str) -> str:

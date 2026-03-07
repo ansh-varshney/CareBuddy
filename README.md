@@ -1,8 +1,8 @@
 # CareBuddy - AI-Powered Health Assistant
 
-> An intelligent conversational health assistant powered by local LLMs (via Ollama), RAG-enhanced medical knowledge, and real-time streaming chat.
+An intelligent conversational health assistant utilizing local Large Language Models (LLMs via Ollama) alongside RAG-enhanced medical knowledge for secure, private, and real-time inference.
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com)
 [![Angular](https://img.shields.io/badge/Angular-17-red.svg)](https://angular.io)
 [![Ollama](https://img.shields.io/badge/LLM-Ollama-orange.svg)](https://ollama.ai)
@@ -10,213 +10,146 @@
 
 ---
 
-## Features
+## Technical Features
 
-- **Real-time streaming chat** - WebSocket-powered token-by-token responses
-- **RAG pipeline** - ChromaDB + LangChain medical knowledge retrieval
-- **Safety guardrails** - Instant emergency detection, crisis response, urgency triage
-- **Personalized responses** - Medical profile (age, sex, conditions, meds) injected into system prompt
-- **Symptom journal** - Log and track symptoms with AI-assisted extraction
-- **JWT authentication** - Secure user accounts with bcrypt hashing
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Backend API | FastAPI + Python 3.11 |
-| LLM | Ollama (local) — qwen2:1.5b, llama3, mistral |
-| RAG | LangChain + ChromaDB |
-| Frontend | Angular 17 (standalone components, WebSocket) |
-| Database | SQLite (dev) / PostgreSQL (prod) |
-| Cache | Redis (optional — in-memory fallback) |
-| CI/CD | Jenkins (Jenkinsfile included) |
+- **Real-time streaming chat:** WebSocket-powered, rapid token-by-token responses for a seamless user experience.
+- **RAG pipeline architecture:** Domain-specific knowledge retrieval utilizing ChromaDB and LangChain to minimize LLM hallucination and ground responses in established literature.
+- **Safety guardrail implementation:** Real-time emergency detection, crisis response protocols, and automated symptom urgency triage mechanisms that precede LLM inference.
+- **Personalized context injection:** System prompts are dynamically assembled using the user's explicit medical profile parameters (age, sex, existing conditions, current medications).
+- **Longitudinal symptom journaling:** Comprehensive logging of historical symptoms featuring a zero-shot AI extraction pipeline to ingest unstructured free-text descriptions.
+- **Secure architecture:** JWT-based authentication combined with bcrypt password hashing and localized model execution to guarantee patient data privacy.
 
 ---
 
-## Quick Start
+## Infrastructure Stack
 
-### Prerequisites
-- Python 3.11+
+| Component | Technology | Description |
+|---|---|---|
+| **Backend API Framework** | FastAPI | Asynchronous standard for high-throughput WebSocket endpoints |
+| **Generative AI Engine** | Ollama | Local execution of foundation models (qwen2, llama3, mistral) |
+| **Retrieval Architecture** | LangChain, ChromaDB | Vector search operations for dynamic context provision |
+| **Client Application** | Angular 17 | Standalone component architecture |
+| **Relational Database** | SQLite / PostgreSQL | Structured persistence for user data and symptom ledgers |
+| **Continuous Integration** | GitHub Actions | Parallelized pipeline for linting, testing, and dependency auditing |
+
+---
+
+## Local Environment Initialization
+
+### System Prerequisites
+- Python 3.12+
 - Node.js 20+
-- [Ollama](https://ollama.ai) installed and running
+- [Ollama](https://ollama.ai) daemon installed and operational
 
-### 1. Clone & Setup Backend
+### 1. Backend Service Configuration
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/CareBuddy.git
+git clone https://github.com/ansh-varshney/CareBuddy.git
 cd CareBuddy/backend
 
-# Create virtual environment
+# Initialize and activate the virtual environment
 python -m venv venv
 venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Mac/Linux
+# source venv/bin/activate   # macOS / Linux
 
-# Install dependencies
+# Provision Python dependencies
 pip install -r requirements.txt
 
-# Configure environment
+# Provision environment variable template
 cp .env.example .env
-# Edit .env — set your preferred model and secret key
 ```
 
-### 2. Pull an Ollama Model
+### 2. Procure AI Models
 
 ```bash
-# Fast & lightweight (recommended for dev)
+# Recommended baseline model for development throughput:
 ollama pull qwen2:1.5b
 
-# Or full size
+# Recommended model for high-fidelity evaluation:
 ollama pull llama3
 ```
 
-### 3. Seed the Knowledge Base
+### 3. Initialize the Vector Store
 
+Execute the baseline ingestion script to populate the ChromaDB vector embeddings:
 ```bash
 cd backend
 python -m knowledge_base.ingest
-# Output: ✅ Knowledge base ready! Total documents: 10
 ```
 
-### 4. Start the Backend
+### 4. Execute Application Services
 
+**Backend API Service:**
 ```bash
 cd backend
 uvicorn app.main:app --reload --port 8000
 ```
 
-### 5. Start the Frontend
-
+**Frontend Application:**
 ```bash
 cd frontend
 npm install
-ng serve --port 4200
+npm run start
 ```
 
-Open **http://localhost:4200** — register an account and start chatting.
+Access the development client at **http://localhost:4200**. The interactive Swagger API documentation is available at **http://localhost:8000/docs**.
 
 ---
 
-## Environment Variables (`backend/.env`)
+## Testing Framework
 
-```ini
-# LLM
-OLLAMA_BASE_URL=http://localhost:11434
-DEFAULT_MODEL=qwen2:1.5b
-
-# Database
-DATABASE_URL=sqlite:///./carebuddy.db
-
-# Auth
-SECRET_KEY=your-random-secret-key-here
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-
-# Optional
-REDIS_URL=redis://localhost:6379/0
-CORS_ORIGINS=http://localhost:4200
-```
-
----
-
-## Running Tests
+Execute the automated test suite to validate core functionality and safety assertions.
 
 ```bash
 cd backend
 
-# Install test dependencies
+# Provision testing utilities
 pip install -r requirements-test.txt
 
-# Run all tests
+# Execute assertions
 pytest
-
-# With coverage report
 pytest --cov=app --cov-report=term-missing
-
-# Run specific test file
-pytest tests/test_safety.py -v
 ```
 
 ---
 
-## API Reference
+## Continuous Integration Details
 
-Full interactive docs at **http://localhost:8000/docs** (Swagger UI).
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/auth/register` | Register with optional medical profile |
-| `POST` | `/api/auth/login` | Login (returns JWT) |
-| `GET` | `/api/auth/me` | Get user profile |
-| `POST` | `/api/chat/` | Send message (REST) |
-| `WS` | `/api/chat/ws/{conv_id}` | Streaming chat (WebSocket) |
-| `GET` | `/api/chat/conversations` | List conversations |
-| `GET` | `/api/chat/conversations/{id}` | Get conversation + messages |
-| `GET/POST/DELETE` | `/api/symptoms/` | Symptom journal CRUD |
-| `GET` | `/api/settings/models` | List available models |
-| `PUT` | `/api/settings/models` | Switch active model |
-| `GET` | `/api/settings/knowledge-base` | Knowledge base stats |
-| `GET` | `/health` | Health check |
+This repository utilizes GitHub Actions to run the full validation pipeline automatically on pull requests and commits to the main branch. 
+The pipeline configuration is strictly defined in `.github/workflows/ci.yml` and currently encompasses:
+- Pydantic and FastAPI schema validation (Ruff)
+- State-machine validation and regression tests (Pytest)
+- Component compilation validation (ESLint)
+- Supply chain security auditing (`pip-audit`, `npm audit`)
 
 ---
 
-## CI/CD (Jenkins)
+## Clinical Safety Abstraction
 
-A `Jenkinsfile` is included at the project root. Pipeline stages:
+The system intercepts high-risk natural language tokens prior to routing queries to the generative engine. This rules-based classification guarantees deterministic handling of medical emergencies.
 
-```
-Checkout → Backend Lint → Frontend Lint → Backend Tests → Frontend Tests
-→ Security Scan → Build Docker → Push to Registry → Deploy
-```
-
-Push/Deploy stages only run on the `main` branch.
-
-See `implementation_plan.md` for detailed Jenkins setup instructions.
-
----
-
-## Project Structure
-
-```
-CareBuddy/
-├── backend/
-│   ├── app/
-│   │   ├── api/routes/        # chat, auth, symptoms, settings, health
-│   │   ├── core/              # llm_engine, rag_pipeline, triage, safety, memory
-│   │   ├── models/            # SQLAlchemy User, Conversation, Message, SymptomEntry
-│   │   └── utils/             # validators (Pydantic schemas)
-│   ├── knowledge_base/        # Medical article ingestion scripts
-│   ├── tests/                 # pytest test suite
-│   ├── requirements.txt
-│   ├── requirements-test.txt
-│   └── Dockerfile
-├── frontend/
-│   ├── src/app/
-│   │   ├── pages/             # chat, login, register, symptoms, settings
-│   │   ├── services/          # auth, chat (WebSocket), api
-│   │   ├── guards/            # authGuard, guestGuard
-│   │   └── models/            # TypeScript interfaces
-│   └── Dockerfile
-├── Jenkinsfile
-├── docker-compose.yml
-└── README.md
-```
-
----
-
-## Safety Features
-
-CareBuddy includes clinical safety guardrails that trigger **immediately** (no LLM wait):
-
-| Trigger | Response |
+| Trigger Condition | System Response Action |
 |---|---|
-| Emergency keywords (chest pain, can't breathe, seizure) | 🚨 Emergency response with 911/108 |
-| Crisis keywords (suicidal, self-harm) | 💙 Crisis response with 988/iCall |
-| High urgency (fever >103°F, blood in stool) | ⚠️ Flagged as urgency level 4 |
-| All normal responses | Medical disclaimer appended |
+| **Critical Physiology** (e.g., chest pain, rapid onset numbness) | Automated directive to contact emergency services (911/108) |
+| **Psychiatric Crisis** (e.g., self-harm, severe ideation) | Automated directive to contact crisis hotlines (988/iCall) |
+| **Severe Trajectory** (e.g., sustained high fever) | Internal categorization as urgency level 4 for triage prioritization |
+| **Standard Inquiry** | Medical disclaimer appended indicating automated, non-diagnostic response |
 
 ---
 
-## License
+## Future Scope and Architecture Roadmap
 
-MIT License 2026
+The CareBuddy framework establishes a baseline pipeline for localized, multi-agent healthcare assistance. Future architectural phases include:
+
+- **EHR/EMR Interoperability Layer:** Adoption of FHIR and HL7 protocols to permit bidirectional synchronization with standard institutional health records.
+- **Multimodal Diagnostic Ingestion:** Enhancing the RAG pipeline to ingest diagnostic imaging and continuous biomarker data streams from connected wearables (e.g., Apple HealthKit integrations).
+- **Federated Learning Pipelines:** Implementing secure, privacy-preserving federated fine-tuning across localized user instances to improve clinical accuracy without centralizing patient-identifiable information (PII).
+- **Proactive Anomaly Detection:** Applying timeseries forecasting models upon longitudinal symptom journal data to predict and alert users regarding chronic condition flare-ups prior to symptomatic manifestation.
+- **Provider Triaging Protocols:** Export utilities to bundle historic journal data, generated diagnostic assessments, and biomedical profiles into structured clinical summaries for direct transmission to licensed physicians.
+
+---
+
+## Licensing Information
+
+MIT License 2026. 
+*Disclaimer: CareBuddy is an experimental software project developed for the Google Summer of Code (GSoC) 2026. It is not licensed medical software and should not be used as a substitute for professional clinical judgment.*
