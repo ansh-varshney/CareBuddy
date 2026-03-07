@@ -1,4 +1,4 @@
-# CareBuddy — AI-Powered Health Assistant 🏥
+# CareBuddy - AI-Powered Health Assistant
 
 > An intelligent conversational health assistant powered by local LLMs (via Ollama), RAG-enhanced medical knowledge, and real-time streaming chat.
 
@@ -12,13 +12,12 @@
 
 ## Features
 
-- 💬 **Real-time streaming chat** — WebSocket-powered token-by-token responses
-- 🧠 **RAG pipeline** — ChromaDB + LangChain medical knowledge retrieval
-- 🚨 **Safety guardrails** — Instant emergency detection, crisis response, urgency triage
-- 🔄 **Model switching** — Hot-swap between llama3, qwen2, mistral, gemma at runtime
-- 👤 **Personalized responses** — Medical profile (age, sex, conditions, meds) injected into system prompt
-- 📋 **Symptom journal** — Log and track symptoms with AI-assisted extraction
-- 🔐 **JWT authentication** — Secure user accounts with bcrypt hashing
+- **Real-time streaming chat** - WebSocket-powered token-by-token responses
+- **RAG pipeline** - ChromaDB + LangChain medical knowledge retrieval
+- **Safety guardrails** - Instant emergency detection, crisis response, urgency triage
+- **Personalized responses** - Medical profile (age, sex, conditions, meds) injected into system prompt
+- **Symptom journal** - Log and track symptoms with AI-assisted extraction
+- **JWT authentication** - Secure user accounts with bcrypt hashing
 
 ---
 
