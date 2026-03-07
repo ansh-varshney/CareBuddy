@@ -9,7 +9,9 @@ An intelligent conversational health assistant utilizing local Large Language Mo
 [![CI](https://github.com/ansh-varshney/CareBuddy/actions/workflows/ci.yml/badge.svg)](https://github.com/ansh-varshney/CareBuddy/actions/workflows/ci.yml)
 
 ---
+## Video demo
 
+---
 ## Technical Features
 
 - **Real-time streaming chat:** WebSocket-powered, rapid token-by-token responses for a seamless user experience.
