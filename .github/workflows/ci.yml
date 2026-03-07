@@ -1,0 +1,124 @@
+name: CareBuddy CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Backend ────────────────────────────────────────────────────
+  backend-lint:
+    name: Backend Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install ruff
+        run: pip install ruff==0.8.6
+
+      - name: Run ruff
+        run: ruff check backend/ --output-format=github
+
+  backend-tests:
+    name: Backend Tests (pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements2.txt -r requirements-test.txt
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ \
+            --junitxml=reports/test-results.xml \
+            --cov=app \
+            --cov-report=xml:reports/coverage.xml \
+            --cov-report=term-missing \
+            -q
+        env:
+          DATABASE_URL: sqlite:///./test.db
+          SECRET_KEY: test-secret-key-for-ci-only
+          DEFAULT_MODEL: qwen2:1.5b
+          OLLAMA_BASE_URL: http://localhost:11434
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results
+          path: backend/reports/
+
+      - name: Upload coverage to summary
+        if: always()
+        run: |
+          echo "## Backend Coverage" >> $GITHUB_STEP_SUMMARY
+          pip install pytest-cov > /dev/null 2>&1
+          coverage report --format=markdown >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+
+  # ── Frontend ───────────────────────────────────────────────────
+  frontend-lint:
+    name: Frontend Lint (ESLint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --silent
+
+      - name: Run Angular ESLint
+        run: npx ng lint --format compact
+
+  # ── Security Scan ──────────────────────────────────────────────
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Python dependency audit
+        run: |
+          pip install pip-audit
+          pip-audit -r backend/requirements2.txt || true
+
+      - name: NPM dependency audit
+        working-directory: frontend
+        run: |
+          npm ci --silent
+          npm audit --audit-level=high || true

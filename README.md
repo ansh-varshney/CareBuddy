@@ -6,6 +6,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com)
 [![Angular](https://img.shields.io/badge/Angular-17-red.svg)](https://angular.io)
 [![Ollama](https://img.shields.io/badge/LLM-Ollama-orange.svg)](https://ollama.ai)
+[![CI](https://github.com/ansh-varshney/CareBuddy/actions/workflows/ci.yml/badge.svg)](https://github.com/ansh-varshney/CareBuddy/actions/workflows/ci.yml)
 
 ---
 
