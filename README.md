@@ -220,4 +220,4 @@ CareBuddy includes clinical safety guardrails that trigger **immediately** (no L
 
 ## License
 
-MIT License — built for the GSOC'26 CareBuddy project.
+MIT License 2026
